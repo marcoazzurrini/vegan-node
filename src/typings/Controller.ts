@@ -24,15 +24,45 @@ interface RouteInt {
   handler: HandlerInt;
   localMiddlewares: Array<MiddlewareInt>;
 }
+interface SendSuccessProps {
+  res: Response;
+  code?: number;
+  data?: object;
+  message?: string;
+}
+
+type SendSuccess = (props: SendSuccessProps) => Response;
+type SendError = (props: Omit<SendSuccessProps, "data">) => Response;
+
+const sendSuccess: SendSuccess = ({ res, data, message }) => {
+  return res.status(200).json({
+    message: message || "success",
+    data: data,
+  });
+};
+
+const sendError: SendError = ({ res, code, message }) => {
+  return res.status(code || 500).json({
+    message: message || "internal server error",
+  });
+};
+
+const setRouteMiddlewares = (router: Router, route: RouteInt) => {
+  const { localMiddlewares, path } = route;
+  for (const middleware of localMiddlewares) {
+    router.use(path, middleware);
+  }
+};
+
+const setRouteHandler = (router: Router, route: RouteInt) => {
+  router[route.method](route.path, route.handler);
+};
 
 function setRoutes(this: Controller): Router {
   for (const route of this.routes) {
-    const { localMiddlewares, path, method, handler } = route;
-    for (const middleware of localMiddlewares) {
-      this.router.use(path, middleware);
-    }
     try {
-      this.router[method](path, handler);
+      setRouteMiddlewares(this.router, route);
+      setRouteHandler(this.router, route);
     } catch (err) {
       console.error("not a valid method");
     }
@@ -48,27 +78,34 @@ export default abstract class Controller {
 
   public setRoutes = setRoutes;
 
-  protected sendSuccess(
-    res: Response,
-    data?: object,
-    message?: string
-  ): Response {
-    return res.status(200).json({
-      message: message || "success",
-      data: data,
-    });
-  }
+  protected sendSuccess = sendSuccess;
 
-  protected sendError(res: Response, message?: string): Response {
-    return res.status(500).json({
-      message: message || "internal server error",
-    });
-  }
+  protected sendError = sendError;
 }
 
-// function sendSuccess(res: Response, data: object, message?: string): Response {
-//     return res.status(200).json({
-//       message: message || "success",
-//       data: data,
-//     });
-//   }
+// protected sendSuccess({
+//   res,
+//   code,
+//   data,
+//   message,
+// }: SendSuccessProps): Response {
+//   return res.status(code || 200).json({
+//     message: message || "success",
+//     data: data,
+//   });
+// }
+
+// protected sendError(
+//   res: Response,
+//   code?: number,
+//   message?: string
+// ): Response {
+//   return res.status(code || 500).json({
+//     message: message || "internal server error",
+//   });
+// }
+
+// const { localMiddlewares, path, method, handler } = route;
+// for (const middleware of localMiddlewares) {
+//   this.router.use(path, middleware);
+// }

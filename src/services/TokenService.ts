@@ -1,4 +1,4 @@
-import jwt, { VerifyCallback, VerifyErrors } from "jsonwebtoken";
+import jwt, { VerifyCallback } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { UserInt } from "../typings/index";
 import { ACCESS_TOKEN_SECRET } from "../config";

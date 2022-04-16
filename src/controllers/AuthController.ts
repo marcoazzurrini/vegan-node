@@ -42,12 +42,17 @@ export default class AuthController extends Controller {
       const userService = new UserService(username, password);
       const data = await userService.login();
       if (!data.success) {
-        super.sendError(res, data.message);
+        super.sendError({ res, message: data.message, code: 401 });
         return;
       }
-      super.sendSuccess(res, data.data, data.message);
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 201,
+      });
     } catch (e) {
-      super.sendError(res);
+      super.sendError({ res });
     }
   }
 
@@ -57,12 +62,17 @@ export default class AuthController extends Controller {
       const userService = new UserService(username, password);
       const data = await userService.register();
       if (!data.success) {
-        super.sendError(res, data.message);
+        super.sendError({ res, message: data.message, code: 401 });
         return;
       }
-      super.sendSuccess(res, data.data, data.message);
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 201,
+      });
     } catch (e) {
-      super.sendError(res);
+      super.sendError({ res });
     }
   }
 
@@ -72,12 +82,17 @@ export default class AuthController extends Controller {
       const userService = new UserService(username, password);
       const data = await userService.deleteUser();
       if (!data.success) {
-        super.sendError(res, data.message);
+        super.sendError({ res, message: data.message, code: 401 });
         return;
       }
-      super.sendSuccess(res, data.data, data.message);
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 201,
+      });
     } catch (error) {
-      super.sendError(res);
+      super.sendError({ res });
     }
   }
 
@@ -87,12 +102,17 @@ export default class AuthController extends Controller {
       const userService = new UserService(username, password);
       const data = await userService.updatePassword();
       if (!data.success) {
-        super.sendError(res, data.message);
+        super.sendError({ res, message: data.message, code: 401 });
         return;
       }
-      super.sendSuccess(res, data.data, data.message);
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 201,
+      });
     } catch (error) {
-      super.sendError(res);
+      super.sendError({ res });
     }
   }
 }

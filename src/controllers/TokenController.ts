@@ -17,7 +17,7 @@ export default class TokenController extends Controller {
     const { verifiedUser } = req;
     if (verifiedUser) {
       const tokenVerificationData = { access: true, user: verifiedUser };
-      super.sendSuccess(res, { tokenVerificationData });
+      super.sendSuccess({ res, data: { tokenVerificationData } });
     }
   }
 }
