@@ -1,26 +1,40 @@
 import express from "express";
-import cors from "cors";
-import db from "./models";
+import routes from "./routes/user";
+import bodyParser from "body-parser";
+import config from "./config/config";
 
 const app = express();
-const corsOptions = {
-  origin: "http://localhost:8001",
-};
 
-app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.get("/", (_, res) => {
-  res.json({ message: "Hello!!!" });
+/** Rules of our API */
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  if (req.method == "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+    return res.status(200).json({});
+  }
+
+  next();
 });
 
-const PORT = process.env.PORT || 8080;
+app.use("/users", routes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Error Handling
+app.use((_, res) => {
+  const error = new Error("Not found");
+
+  res.status(404).json({
+    message: error.message,
+  });
 });
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and Resync DB");
+app.listen(config.server.port, () => {
+  console.log(`Server started at http://localhost:${config.server.port}`);
 });
