@@ -11,4 +11,5 @@ export default {
   transform: {
     "^.+\\.ts?$": "babel-jest",
   },
+  modulePathIgnorePatterns: ["testUtils"],
 };

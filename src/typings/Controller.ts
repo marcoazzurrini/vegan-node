@@ -32,37 +32,26 @@ interface SendSuccessProps {
   message?: string;
 }
 
-// setRoutes method and helper functions
-const setRouteMiddlewares = (router: Router, route: RouteInt) => {
-  const { localMiddlewares, path } = route;
-  for (const middleware of localMiddlewares) {
-    router.use(path, middleware);
-  }
-};
-
-const setRouteHandler = (router: Router, route: RouteInt) => {
-  router[route.method](route.path, route.handler);
-};
-
-function setRoutes(this: Controller): Router {
-  for (const route of this.routes) {
-    try {
-      setRouteMiddlewares(this.router, route);
-      setRouteHandler(this.router, route);
-    } catch (err) {
-      console.error("not a valid method");
-    }
-  }
-
-  return this.router;
-}
-
 export default abstract class Controller {
   public router: Router = Router();
   public abstract path: string;
   protected abstract readonly routes: Array<RouteInt>;
 
-  public setRoutes = setRoutes;
+  public setRoutes = (): Router => {
+    for (const route of this.routes) {
+      try {
+        const { localMiddlewares, path } = route;
+        for (const middleware of localMiddlewares) {
+          this.router.use(path, middleware);
+        }
+        this.router[route.method](route.path, route.handler.bind(this));
+      } catch (err) {
+        console.error("not a valid method");
+      }
+    }
+
+    return this.router;
+  };
 
   protected sendSuccess({
     res,

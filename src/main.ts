@@ -12,7 +12,7 @@ const app: Application = express();
 const server: Server = new Server(app, db.sequelize, PORT);
 
 const controllers: Array<Controller> = [
-  new AuthController(UserService),
+  new AuthController(UserService, db),
   new TokenController(),
 ];
 

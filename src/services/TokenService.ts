@@ -21,13 +21,13 @@ const makeJwtVerifyCallback = (
 ): VerifyCallback => {
   return (err, decodedFromToken) => {
     if (err) {
+      console.log(err);
       handleJwtVerifyError(res);
       return;
     }
 
     const decoded = <{ user: object }>decodedFromToken;
     const decodedUser = <UserInt>decoded.user;
-    console.log(decoded, decodedFromToken, decodedUser);
     if (decodedUser.id !== req.body.id) {
       handleJwtVerifyError(res);
       return;
@@ -40,9 +40,8 @@ const makeJwtVerifyCallback = (
 export default class Token {
   public static verify(req: Request, res: Response, next: NextFunction): void {
     const token = req.headers.authorization?.split(" ")?.[1];
-
     if (!token) {
-      res.json({
+      res.status(401).json({
         data: {
           tokenVerificationData: {
             access: false,
@@ -53,7 +52,7 @@ export default class Token {
       return;
     }
     if (!req.body.id) {
-      res.json({
+      res.status(401).json({
         data: {
           tokenVerificationData: {
             access: false,

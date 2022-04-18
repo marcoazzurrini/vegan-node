@@ -14,6 +14,7 @@ const getUser = async (username: string, db: DatabaseInt) => {
   const userFromDb = await db.User.findOne({
     where: { username },
   });
+
   return userFromDb;
 };
 
@@ -26,6 +27,7 @@ const appendUserToDB = async (
     username,
     password,
   });
+
   return createdUser;
 };
 
@@ -61,14 +63,19 @@ export default class UserService {
   public async login(): Promise<AuthReturnData> {
     try {
       const userFromDb = await getUser(this.username, this.database);
+
       if (!userFromDb) return { message: "No such user", success: false };
 
       const isPasswordEqual = await bcrypt.compare(
         this.password,
         userFromDb.password
       );
+
       if (!isPasswordEqual) {
         return { message: "Invalid password", success: false };
+      }
+      if (userFromDb && !userFromDb.id) {
+        throw new Error();
       }
       const data = this.prepareData(userFromDb);
       return {
@@ -91,6 +98,10 @@ export default class UserService {
         this.password,
         this.database
       );
+
+      if (createdUser && !createdUser.id) {
+        throw new Error();
+      }
       const data = this.prepareData(createdUser);
       return {
         message: "Successfully registered",
@@ -109,7 +120,9 @@ export default class UserService {
       });
       if (numberOfDeleteRows === 0)
         return { message: "User not found", success: false };
-
+      if (typeof numberOfDeleteRows !== "number") {
+        throw new Error();
+      }
       return {
         message: "Successfully deleted user",
         success: true,
@@ -126,8 +139,12 @@ export default class UserService {
         this.password,
         this.database
       );
+
       if (numberOfUpdatedRows === 0)
         return { message: "User not found", success: false };
+      if (typeof numberOfUpdatedRows !== "number") {
+        throw new Error();
+      }
       return {
         message: "Successfully updated password",
         success: true,

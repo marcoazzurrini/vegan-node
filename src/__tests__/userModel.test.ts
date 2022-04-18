@@ -1,26 +1,23 @@
-import { Sequelize } from "sequelize";
 const { DataTypes } = require("sequelize"); // eslint-disable-line
-import { getUser } from "../../models/UserModel";
+import { getUser } from "../models/UserModel";
+import getMockDatabase from "./testUtils/getMockDatabase";
 
 const setup = () => {
-  const mockDefine = jest.fn();
-  const sequelize = {
-    define: mockDefine,
-  } as unknown as Sequelize;
-  return { mockDefine, sequelize };
+  const { sequelize } = getMockDatabase();
+  return { define: sequelize.define, sequelize };
 };
 
 describe("testing userModel", () => {
   it("getUser should call sequelize.define", () => {
-    const { mockDefine, sequelize } = setup();
+    const { define, sequelize } = setup();
     getUser(sequelize);
-    expect(mockDefine).toHaveBeenCalled();
+    expect(define).toHaveBeenCalled();
   });
 
   it("should call sequelize.define with appropriate parameters", () => {
-    const { mockDefine, sequelize } = setup();
+    const { define, sequelize } = setup();
     getUser(sequelize);
-    expect(mockDefine).toHaveBeenCalledWith(
+    expect(define).toHaveBeenCalledWith(
       "user",
       {
         id: {
