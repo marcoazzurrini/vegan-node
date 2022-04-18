@@ -18,6 +18,7 @@ type HandlerInt = (
   next: NextFunction
 ) => void | Promise<void>;
 
+// response handlers
 interface RouteInt {
   path: string;
   method: Methods;
@@ -31,22 +32,7 @@ interface SendSuccessProps {
   message?: string;
 }
 
-type SendSuccess = (props: SendSuccessProps) => Response;
-type SendError = (props: Omit<SendSuccessProps, "data">) => Response;
-
-const sendSuccess: SendSuccess = ({ res, data, message }) => {
-  return res.status(200).json({
-    message: message || "success",
-    data: data,
-  });
-};
-
-const sendError: SendError = ({ res, code, message }) => {
-  return res.status(code || 500).json({
-    message: message || "internal server error",
-  });
-};
-
+// setRoutes method and helper functions
 const setRouteMiddlewares = (router: Router, route: RouteInt) => {
   const { localMiddlewares, path } = route;
   for (const middleware of localMiddlewares) {
@@ -78,34 +64,25 @@ export default abstract class Controller {
 
   public setRoutes = setRoutes;
 
-  protected sendSuccess = sendSuccess;
+  protected sendSuccess({
+    res,
+    data,
+    message,
+    code,
+  }: SendSuccessProps): Response {
+    return res.status(code || 200).json({
+      message: message || "success",
+      data: data,
+    });
+  }
 
-  protected sendError = sendError;
+  protected sendError({
+    res,
+    code,
+    message,
+  }: Omit<SendSuccessProps, "data">): Response {
+    return res.status(code || 500).json({
+      message: message || "internal server error",
+    });
+  }
 }
-
-// protected sendSuccess({
-//   res,
-//   code,
-//   data,
-//   message,
-// }: SendSuccessProps): Response {
-//   return res.status(code || 200).json({
-//     message: message || "success",
-//     data: data,
-//   });
-// }
-
-// protected sendError(
-//   res: Response,
-//   code?: number,
-//   message?: string
-// ): Response {
-//   return res.status(code || 500).json({
-//     message: message || "internal server error",
-//   });
-// }
-
-// const { localMiddlewares, path, method, handler } = route;
-// for (const middleware of localMiddlewares) {
-//   this.router.use(path, middleware);
-// }

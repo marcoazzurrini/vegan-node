@@ -6,12 +6,13 @@ import AuthController from "./controllers/AuthController";
 import TokenController from "./controllers/TokenController";
 import { json, urlencoded } from "body-parser";
 import { PORT } from "./config";
+import UserService from "./services/UserService";
 
 const app: Application = express();
 const server: Server = new Server(app, db.sequelize, PORT);
 
 const controllers: Array<Controller> = [
-  new AuthController(),
+  new AuthController(UserService),
   new TokenController(),
 ];
 

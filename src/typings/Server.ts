@@ -1,7 +1,6 @@
-import { Application, RequestHandler, Request, Response } from "express";
+import { Application, RequestHandler } from "express";
 import { Sequelize } from "sequelize";
 import http from "http";
-import path from "path";
 import Controller from "./Controller";
 
 export default class Server {
@@ -30,12 +29,6 @@ export default class Server {
   public loadControllers(controllers: Array<Controller>): void {
     controllers.forEach((controller) => {
       this.app.use(controller.path, controller.setRoutes());
-    });
-  }
-
-  public renderClient(): void {
-    this.app.get("/*", (_: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, "../../client/build/", "index.html"));
     });
   }
 

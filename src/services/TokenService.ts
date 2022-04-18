@@ -27,6 +27,7 @@ const makeJwtVerifyCallback = (
 
     const decoded = <{ user: object }>decodedFromToken;
     const decodedUser = <UserInt>decoded.user;
+    console.log(decoded, decodedFromToken, decodedUser);
     if (decodedUser.id !== req.body.id) {
       handleJwtVerifyError(res);
       return;
@@ -39,12 +40,13 @@ const makeJwtVerifyCallback = (
 export default class Token {
   public static verify(req: Request, res: Response, next: NextFunction): void {
     const token = req.headers.authorization?.split(" ")?.[1];
+
     if (!token) {
       res.json({
         data: {
           tokenVerificationData: {
             access: false,
-            message: "No token provided",
+            message: "No token provided.",
           },
         },
       });

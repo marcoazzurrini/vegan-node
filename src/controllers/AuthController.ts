@@ -1,7 +1,8 @@
 import Controller, { Methods } from "../typings/Controller";
 import { Request, Response } from "express";
-import UserService from "../services/UserService";
+import UserServiceInt from "../services/UserService";
 import Token from "../services/TokenService";
+import db from "../models";
 
 export default class AuthController extends Controller {
   path = "/user";
@@ -31,15 +32,16 @@ export default class AuthController extends Controller {
       localMiddlewares: [Token.verify],
     },
   ];
-
-  constructor() {
+  UserService: typeof UserServiceInt;
+  constructor(UserService: typeof UserServiceInt) {
     super();
+    this.UserService = UserService;
   }
 
   async handleLogin(req: Request, res: Response): Promise<void> {
     try {
       const { username, password } = req.body;
-      const userService = new UserService(username, password);
+      const userService = new this.UserService(username, password, db);
       const data = await userService.login();
       if (!data.success) {
         super.sendError({ res, message: data.message, code: 401 });
@@ -59,7 +61,7 @@ export default class AuthController extends Controller {
   async handleRegister(req: Request, res: Response): Promise<void> {
     try {
       const { username, password } = req.body;
-      const userService = new UserService(username, password);
+      const userService = new this.UserService(username, password, db);
       const data = await userService.register();
       if (!data.success) {
         super.sendError({ res, message: data.message, code: 401 });
@@ -79,7 +81,7 @@ export default class AuthController extends Controller {
   async handleDeleteUser(req: Request, res: Response): Promise<void> {
     try {
       const { username, password } = req.body;
-      const userService = new UserService(username, password);
+      const userService = new this.UserService(username, password, db);
       const data = await userService.deleteUser();
       if (!data.success) {
         super.sendError({ res, message: data.message, code: 401 });
@@ -99,7 +101,7 @@ export default class AuthController extends Controller {
   async handleUpdatePassword(req: Request, res: Response): Promise<void> {
     try {
       const { username, password } = req.body;
-      const userService = new UserService(username, password);
+      const userService = new this.UserService(username, password, db);
       const data = await userService.updatePassword();
       if (!data.success) {
         super.sendError({ res, message: data.message, code: 401 });

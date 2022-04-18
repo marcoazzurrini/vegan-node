@@ -5,7 +5,7 @@ import config from "../config";
 // ModelStatic provides a control logic for the model
 // IModel provides an interface to model's instance
 
-interface DatabaseInt {
+export interface DatabaseInt {
   sequelize: Sequelize;
   User: UserModelStatic;
 }

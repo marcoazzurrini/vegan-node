@@ -1,6 +1,6 @@
 import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import db from "../models/index";
+import { DatabaseInt } from "../models/index";
 import { DataInt } from "../typings/index";
 import { UserModelInt } from "../models/UserModel";
 import { ACCESS_TOKEN_SECRET } from "../config";
@@ -10,14 +10,18 @@ export interface AuthReturnData {
   success: boolean;
   data?: object;
 }
-const getUser = async (username: string) => {
+const getUser = async (username: string, db: DatabaseInt) => {
   const userFromDb = await db.User.findOne({
     where: { username },
   });
   return userFromDb;
 };
 
-const appendUserToDB = async (username: string, password: string) => {
+const appendUserToDB = async (
+  username: string,
+  password: string,
+  db: DatabaseInt
+) => {
   const createdUser = await db.User.create({
     username,
     password,
@@ -25,13 +29,21 @@ const appendUserToDB = async (username: string, password: string) => {
   return createdUser;
 };
 
-const createUser = async (username: string, password: string) => {
+const createUser = async (
+  username: string,
+  password: string,
+  db: DatabaseInt
+) => {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const createdUser = await appendUserToDB(username, hashedPassword);
+  const createdUser = await appendUserToDB(username, hashedPassword, db);
   return createdUser;
 };
 
-const updateUser = async (username: string, password: string) => {
+const updateUser = async (
+  username: string,
+  password: string,
+  db: DatabaseInt
+) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   return await db.User.update(
     { password: hashedPassword },
@@ -42,13 +54,15 @@ const updateUser = async (username: string, password: string) => {
 export default class UserService {
   constructor(
     public readonly username: string,
-    public readonly password: string
+    public readonly password: string,
+    private readonly database: DatabaseInt
   ) {}
 
   public async login(): Promise<AuthReturnData> {
     try {
-      const userFromDb = await getUser(this.username);
+      const userFromDb = await getUser(this.username, this.database);
       if (!userFromDb) return { message: "No such user", success: false };
+
       const isPasswordEqual = await bcrypt.compare(
         this.password,
         userFromDb.password
@@ -63,16 +77,20 @@ export default class UserService {
         data: data,
       };
     } catch (error) {
-      return { message: "An error occured", success: false };
+      return { message: "An error occurred", success: false };
     }
   }
 
-  public async register(this: UserService): Promise<AuthReturnData> {
+  public async register(): Promise<AuthReturnData> {
     try {
-      const userFromDb = await getUser(this.username);
+      const userFromDb = await getUser(this.username, this.database);
       if (userFromDb) return { message: "User already exists", success: false };
 
-      const createdUser = await createUser(this.username, this.password);
+      const createdUser = await createUser(
+        this.username,
+        this.password,
+        this.database
+      );
       const data = this.prepareData(createdUser);
       return {
         message: "Successfully registered",
@@ -80,13 +98,13 @@ export default class UserService {
         data: data,
       };
     } catch (error) {
-      return { message: "An error occured", success: false };
+      return { message: "An error occurred", success: false };
     }
   }
 
   public async deleteUser(): Promise<AuthReturnData> {
     try {
-      const numberOfDeleteRows = await db.User.destroy({
+      const numberOfDeleteRows = await this.database.User.destroy({
         where: { username: this.username },
       });
       if (numberOfDeleteRows === 0)
@@ -97,7 +115,7 @@ export default class UserService {
         success: true,
       };
     } catch (error) {
-      return { message: "An error occured", success: false };
+      return { message: "An error occurred", success: false };
     }
   }
 
@@ -105,7 +123,8 @@ export default class UserService {
     try {
       const [numberOfUpdatedRows] = await updateUser(
         this.username,
-        this.password
+        this.password,
+        this.database
       );
       if (numberOfUpdatedRows === 0)
         return { message: "User not found", success: false };
@@ -114,7 +133,7 @@ export default class UserService {
         success: true,
       };
     } catch (error) {
-      return { message: "An error occured", success: false };
+      return { message: "An error occurred", success: false };
     }
   }
 
