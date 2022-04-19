@@ -21,7 +21,6 @@ const makeJwtVerifyCallback = (
 ): VerifyCallback => {
   return (err, decodedFromToken) => {
     if (err) {
-      console.log(err);
       handleJwtVerifyError(res);
       return;
     }
