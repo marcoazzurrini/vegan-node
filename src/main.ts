@@ -21,6 +21,10 @@ const globalMiddleware: Array<RequestHandler> = [
   json(),
 ];
 
+process.on("unhandledRejection", (error: Error) => {
+  throw error;
+});
+
 Promise.resolve()
   .then(() => server.initDatabase())
   .then(() => {

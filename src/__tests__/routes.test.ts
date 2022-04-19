@@ -35,7 +35,7 @@ const setup = async (userModelMethods?: UserModelMethodsInt) => {
 
 describe("testing routes", () => {
   describe("testing login route", () => {
-    it("should return 201 if credentials are correct", async () => {
+    it("should return 200 if credentials are correct", async () => {
       const hashedPassword = await hash("password", 10);
       const findOne = {
         username: "username",
@@ -47,7 +47,7 @@ describe("testing routes", () => {
         .post("/user/login")
         .send({ username: "username", password: "password" });
 
-      expect(res.statusCode).toBe(201);
+      expect(res.statusCode).toBe(200);
     });
 
     it("should return 401 if user not found in db", async () => {
@@ -56,7 +56,7 @@ describe("testing routes", () => {
         .post("/user/login")
         .send({ username: "username", password: "password" });
 
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(404);
     });
 
     it("should return 401 if password is not matching", async () => {
@@ -70,7 +70,7 @@ describe("testing routes", () => {
         .post("/user/login")
         .send({ username: "username", password: "password" });
 
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(404);
     });
   });
   describe("testing /user/register", () => {
@@ -84,14 +84,14 @@ describe("testing routes", () => {
       expect(res.statusCode).toBe(201);
     });
 
-    it("should return 401 if user already exists", async () => {
+    it("should return 404 if user already exists", async () => {
       // const user = { id: "id", username: "username", password: "password" };
       const { app } = await setup({ findOne: {} });
       const res = await request(app)
         .post("/user/register")
         .send({ username: "username", password: "password" });
 
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(404);
     });
   });
 
@@ -118,7 +118,7 @@ describe("testing routes", () => {
       expect(res.statusCode).toBe(200);
     });
 
-    it("should return 401 if user doesn't exist", async () => {
+    it("should return 404 if user doesn't exist", async () => {
       const user = { id: "id", username: "username", password: "password" };
       const token = sign({ user }, ACCESS_TOKEN_SECRET, {
         expiresIn: "30d",
@@ -129,7 +129,7 @@ describe("testing routes", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ username: "username", password: "password", id: "id" });
 
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(404);
     });
   });
 
@@ -156,7 +156,7 @@ describe("testing routes", () => {
       expect(res.statusCode).toBe(200);
     });
 
-    it("should return 401 if no user is found", async () => {
+    it("should return 404 if no user is found", async () => {
       const user = { id: "id", username: "username", password: "password" };
       const token = sign({ user }, ACCESS_TOKEN_SECRET, {
         expiresIn: "30d",
@@ -167,7 +167,7 @@ describe("testing routes", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ username: "username", password: "password", id: "id" });
 
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(404);
     });
   });
 });

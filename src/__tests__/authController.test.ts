@@ -68,7 +68,7 @@ describe("testing authController", () => {
       const { authController, req, res } = setup({ login });
       await authController.handleLogin(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.status).toHaveBeenCalledWith(404);
     });
 
     it("should sendSuccess if userService login is successful", async () => {
@@ -80,7 +80,7 @@ describe("testing authController", () => {
       const { authController, req, res } = setup({ login });
       await authController.handleLogin(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.status).toHaveBeenCalledWith(200);
     });
 
     it("should catch un-expected errors and call res with status code of 500", async () => {
@@ -132,7 +132,7 @@ describe("testing authController", () => {
       const { authController, req, res } = setup({ register });
       await authController.handleRegister(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.status).toHaveBeenCalledWith(404);
     });
 
     it("should sendSuccess if userService register is successful", async () => {
@@ -196,7 +196,7 @@ describe("testing authController", () => {
       const { authController, req, res } = setup({ deleteUser });
       await authController.handleDeleteUser(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.status).toHaveBeenCalledWith(404);
     });
 
     it("should sendSuccess if userService deleteUser is successful", async () => {
@@ -260,7 +260,7 @@ describe("testing authController", () => {
       const { authController, req, res } = setup({ updatePassword });
       await authController.handleUpdatePassword(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.status).toHaveBeenCalledWith(404);
     });
 
     it("should sendSuccess if userService updatePassword is successful", async () => {
