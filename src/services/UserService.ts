@@ -155,15 +155,12 @@ export default class UserService {
   }
 
   private prepareData(user: UserModelInt): DataInt {
-    const token = jwt.sign({ user }, ACCESS_TOKEN_SECRET, {
+    const safeUser = { id: user.id, username: user.username };
+    const token = jwt.sign({ user: safeUser }, ACCESS_TOKEN_SECRET, {
       expiresIn: "30d",
     });
     const data: DataInt = {
-      user: {
-        id: user.id,
-        username: user.username,
-        password: user.password,
-      },
+      user: safeUser,
       jwt: token,
     };
     return data;

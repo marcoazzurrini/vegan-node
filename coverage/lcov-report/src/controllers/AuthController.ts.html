@@ -210,6 +210,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -313,33 +340,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -350,6 +350,33 @@ import Token from "../services/TokenService";
 import { DatabaseInt } from "../models";
 &nbsp;
 export default class AuthController extends Controller {
+  path = "/user";
+  routes = [
+    {
+      path: "/login",
+      method: Methods.POST,
+      handler: this.handleLogin,
+      localMiddlewares: [],
+    },
+    {
+      path: "/register",
+      method: Methods.POST,
+      handler: this.handleRegister,
+      localMiddlewares: [],
+    },
+    {
+      path: "/delete",
+      method: Methods.DELETE,
+      handler: this.handleDeleteUser,
+      localMiddlewares: [Token.verify],
+    },
+    {
+      path: "/update_password",
+      method: Methods.PUT,
+      handler: this.handleUpdatePassword,
+      localMiddlewares: [Token.verify],
+    },
+  ];
   constructor(
     public readonly UserService: typeof UserServiceInt,
     public readonly database: DatabaseInt
@@ -455,33 +482,6 @@ export default class AuthController extends Controller {
       super.sendError({ res });
     }
   }
-  path = "/user";
-  routes = [
-    {
-      path: "/login",
-      method: Methods.POST,
-      handler: this.handleLogin,
-      localMiddlewares: [],
-    },
-    {
-      path: "/register",
-      method: Methods.POST,
-      handler: this.handleRegister,
-      localMiddlewares: [],
-    },
-    {
-      path: "/delete",
-      method: Methods.DELETE,
-      handler: this.handleDeleteUser,
-      localMiddlewares: [Token.verify],
-    },
-    {
-      path: "/update_password",
-      method: Methods.PUT,
-      handler: this.handleUpdatePassword,
-      localMiddlewares: [Token.verify],
-    },
-  ];
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -490,7 +490,7 @@ export default class AuthController extends Controller {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Mon Apr 18 2022 23:51:38 GMT+0200 (Central European Summer Time)
+                at Tue Apr 19 2022 09:06:25 GMT+0200 (Central European Summer Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -45,12 +45,14 @@ describe("testing userService", () => {
 
       const { userService } = setup({ findOne: user });
       const res = await userService.login();
-      const resWithoutJwt = { ...res, data: { ...res.data, jwt: "jwt" } };
 
-      expect(resWithoutJwt).toEqual({
+      expect(res).toEqual({
         message: "Successfully logged in",
         success: true,
-        data: { jwt: "jwt", user },
+        data: {
+          jwt: expect.any(String),
+          user: { id: user.id, username: user.username },
+        },
       });
     });
 
@@ -124,12 +126,14 @@ describe("testing userService", () => {
 
       const { userService } = setup({ create: user });
       const res = await userService.register();
-      const resWithoutJwt = { ...res, data: { ...res.data, jwt: "jwt" } };
 
-      expect(resWithoutJwt).toEqual({
+      expect(res).toEqual({
         message: "Successfully registered",
         success: true,
-        data: { jwt: "jwt", user },
+        data: {
+          jwt: expect.any(String),
+          user: { id: user.id, username: user.username },
+        },
       });
     });
 

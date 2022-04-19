@@ -5,111 +5,6 @@ import Token from "../services/TokenService";
 import { DatabaseInt } from "../models";
 
 export default class AuthController extends Controller {
-  constructor(
-    public readonly UserService: typeof UserServiceInt,
-    public readonly database: DatabaseInt
-  ) {
-    super();
-
-    this.UserService = UserService;
-    this.database = database;
-  }
-
-  async handleLogin(req: Request, res: Response): Promise<void> {
-    try {
-      const { username, password } = req.body;
-      const userService = new this.UserService(
-        username,
-        password,
-        this.database
-      );
-      const data = await userService.login();
-      if (!data.success) {
-        super.sendError({ res, message: data.message, code: 401 });
-        return;
-      }
-      super.sendSuccess({
-        res,
-        data: data.data,
-        message: data.message,
-        code: 201,
-      });
-    } catch (e) {
-      super.sendError({ res });
-    }
-  }
-
-  async handleRegister(req: Request, res: Response): Promise<void> {
-    try {
-      const { username, password } = req.body;
-      const userService = new this.UserService(
-        username,
-        password,
-        this.database
-      );
-      const data = await userService.register();
-      if (!data.success) {
-        super.sendError({ res, message: data.message, code: 401 });
-        return;
-      }
-      super.sendSuccess({
-        res,
-        data: data.data,
-        message: data.message,
-        code: 201,
-      });
-    } catch (e) {
-      super.sendError({ res });
-    }
-  }
-
-  async handleDeleteUser(req: Request, res: Response): Promise<void> {
-    try {
-      const { username, password } = req.body;
-      const userService = new this.UserService(
-        username,
-        password,
-        this.database
-      );
-      const data = await userService.deleteUser();
-      if (!data.success) {
-        super.sendError({ res, message: data.message, code: 401 });
-        return;
-      }
-      super.sendSuccess({
-        res,
-        data: data.data,
-        message: data.message,
-        code: 200,
-      });
-    } catch (error) {
-      super.sendError({ res });
-    }
-  }
-
-  async handleUpdatePassword(req: Request, res: Response): Promise<void> {
-    try {
-      const { username, password } = req.body;
-      const userService = new this.UserService(
-        username,
-        password,
-        this.database
-      );
-      const data = await userService.updatePassword();
-      if (!data.success) {
-        super.sendError({ res, message: data.message, code: 401 });
-        return;
-      }
-      super.sendSuccess({
-        res,
-        data: data.data,
-        message: data.message,
-        code: 201,
-      });
-    } catch (error) {
-      super.sendError({ res });
-    }
-  }
   path = "/user";
   routes = [
     {
@@ -137,4 +32,109 @@ export default class AuthController extends Controller {
       localMiddlewares: [Token.verify],
     },
   ];
+  constructor(
+    public readonly UserService: typeof UserServiceInt,
+    public readonly database: DatabaseInt
+  ) {
+    super();
+
+    this.UserService = UserService;
+    this.database = database;
+  }
+
+  async handleLogin(req: Request, res: Response): Promise<void> {
+    try {
+      const { username, password } = req.body;
+      const userService = new this.UserService(
+        username,
+        password,
+        this.database
+      );
+      const data = await userService.login();
+      if (!data.success) {
+        super.sendError({ res, message: data.message, code: 404 });
+        return;
+      }
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 200,
+      });
+    } catch (e) {
+      super.sendError({ res });
+    }
+  }
+
+  async handleRegister(req: Request, res: Response): Promise<void> {
+    try {
+      const { username, password } = req.body;
+      const userService = new this.UserService(
+        username,
+        password,
+        this.database
+      );
+      const data = await userService.register();
+      if (!data.success) {
+        super.sendError({ res, message: data.message, code: 404 });
+        return;
+      }
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 201,
+      });
+    } catch (e) {
+      super.sendError({ res });
+    }
+  }
+
+  async handleDeleteUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { username, password } = req.body;
+      const userService = new this.UserService(
+        username,
+        password,
+        this.database
+      );
+      const data = await userService.deleteUser();
+      if (!data.success) {
+        super.sendError({ res, message: data.message, code: 404 });
+        return;
+      }
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 200,
+      });
+    } catch (error) {
+      super.sendError({ res });
+    }
+  }
+
+  async handleUpdatePassword(req: Request, res: Response): Promise<void> {
+    try {
+      const { username, password } = req.body;
+      const userService = new this.UserService(
+        username,
+        password,
+        this.database
+      );
+      const data = await userService.updatePassword();
+      if (!data.success) {
+        super.sendError({ res, message: data.message, code: 404 });
+        return;
+      }
+      super.sendSuccess({
+        res,
+        data: data.data,
+        message: data.message,
+        code: 201,
+      });
+    } catch (error) {
+      super.sendError({ res });
+    }
+  }
 }
